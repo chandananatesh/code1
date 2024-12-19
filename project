@@ -1,0 +1,717 @@
+//2 sum
+class Solution {
+ public:
+  vector<int> twoSum(vector<int>& nums, int target) {
+    unordered_map<int, int> numToIndex;
+
+    for (int i = 0; i < nums.size(); ++i) {
+      if (const auto it = numToIndex.find(target - nums[i]);
+          it != numToIndex.cend())
+        return {it->second, i};
+      numToIndex[nums[i]] = i;
+    }
+
+    throw;
+  }
+};
+
+// Add two numbers
+class Solution {
+public:
+    
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        int val_1 , val_2, new_val, remainder;
+        ListNode* not_null;
+        ListNode* maybe_null;
+        
+        if(l1 == NULL && l2 == NULL){
+            return NULL;
+        }
+        
+        val_1 = (l1 == NULL? 0: l1->val);
+        val_2 = (l2 == NULL? 0: l2->val);
+        
+        not_null = (l1 == NULL? l2: l1);
+        maybe_null = ((l1 == not_null)? l2:l1);
+        
+        not_null->val= val_1+val_2;
+        not_null->next = addTwoNumbers(not_null->next, (maybe_null == NULL?NULL:maybe_null->next));
+        
+        remainder = floor(not_null->val/10);
+        not_null->val = (not_null->val%10);
+        ListNode* this_node= not_null;
+        
+        while(remainder != 0 && this_node->next!=NULL){
+            (this_node->next->val)+=remainder;
+            remainder= floor(this_node->next->val/10);
+            (this_node->next->val) = (this_node->next->val%10);
+            this_node = this_node->next;
+        }
+        
+        if(remainder!= 0 && this_node->next==NULL){
+            this_node->next = new ListNode(remainder);
+        }
+        
+        return not_null;
+    }
+};
+//  Longest Substring Without Repeating Characters
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        bool ss[128]{};
+        int ans = 0;
+        for (int i = 0, j = 0; j < s.size(); ++j) {
+            while (ss[s[j]]) {
+                ss[s[i++]] = false;
+            }
+            ss[s[j]] = true;
+            ans = max(ans, j - i + 1);
+        }
+        return ans;
+    }
+};
+//Median of Two Sorted Arrays
+class Solution {
+ public:
+  double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+    const int n1 = nums1.size();
+    const int n2 = nums2.size();
+    if (n1 > n2)
+      return findMedianSortedArrays(nums2, nums1);
+
+    int l = 0;
+    int r = n1;
+
+    while (l <= r) {
+      const int partition1 = (l + r) / 2;
+      const int partition2 = (n1 + n2 + 1) / 2 - partition1;
+      const int maxLeft1 = partition1 == 0 ? INT_MIN : nums1[partition1 - 1];
+      const int maxLeft2 = partition2 == 0 ? INT_MIN : nums2[partition2 - 1];
+      const int minRight1 = partition1 == n1 ? INT_MAX : nums1[partition1];
+      const int minRight2 = partition2 == n2 ? INT_MAX : nums2[partition2];
+      if (maxLeft1 <= minRight2 && maxLeft2 <= minRight1)
+        return (n1 + n2) % 2 == 0
+                   ? (max(maxLeft1, maxLeft2) + min(minRight1, minRight2)) * 0.5
+                   : max(maxLeft1, maxLeft2);
+      else if (maxLeft1 > minRight2)
+        r = partition1 - 1;
+      else
+        l = partition1 + 1;
+    }
+
+    throw;
+  }
+};
+// Longest Palindromic Substring
+class Solution {
+ public:
+  string longestPalindrome(string s) {
+    if (s.empty())
+      return "";
+
+    // (start, end) indices of the longest palindrome in s
+    pair<int, int> indices{0, 0};
+
+    for (int i = 0; i < s.length(); ++i) {
+      const auto [l1, r1] = extend(s, i, i);
+      if (r1 - l1 > indices.second - indices.first)
+        indices = {l1, r1};
+      if (i + 1 < s.length() && s[i] == s[i + 1]) {
+        const auto [l2, r2] = extend(s, i, i + 1);
+        if (r2 - l2 > indices.second - indices.first)
+          indices = {l2, r2};
+      }
+    }
+
+    return s.substr(indices.first, indices.second - indices.first + 1);
+  }
+
+ private:
+  // Returns the (start, end) indices of the longest palindrome extended from
+  // the substring s[i..j].
+  pair<int, int> extend(const string& s, int i, int j) {
+    for (; i >= 0 && j < s.length(); --i, ++j)
+      if (s[i] != s[j])
+        break;
+    return {i + 1, j - 1};
+  }
+};
+// Zigzag Conversion
+class Solution {
+ public:
+  string convert(string s, int numRows) {
+    string ans;
+    vector<vector<char>> rows(numRows);
+    int k = 0;
+    int direction = (numRows == 1) - 1;
+
+    for (const char c : s) {
+      rows[k].push_back(c);
+      if (k == 0 || k == numRows - 1)
+        direction *= -1;
+      k += direction;
+    }
+
+    for (const vector<char>& row : rows)
+      for (const char c : row)
+        ans += c;
+
+    return ans;
+  }
+};
+//Reverse Integer
+class Solution {
+public:
+    int reverse(int x) {
+        int num = x;
+        long int rev = 0;
+        while(num != 0){
+            int digit = num%10;
+            rev = 10*rev + digit;
+            if(rev > INT_MAX)return 0;
+            if(rev < INT_MIN)return 0;
+            num/=10;
+        }
+        return (int)rev;
+    }
+};
+//String to Integer (atoi)
+class Solution {
+public:
+    int myAtoi(string s) {
+        
+        const int len = s.size();
+        
+        if(len == 0){
+            return 0;
+        }
+        
+        int index = 0;
+        while(index < len && s[index] == ' '){
+            ++index;
+        }
+        if(index == len){
+            return 0;
+        }
+        
+        char ch;
+        bool isNegative = (ch = s[index]) == '-';
+        
+        if(isNegative || ch == '+'){
+            ++index;
+        }
+        
+        const int maxLimit = INT_MAX / 10;
+        int result = 0;
+        while(index < len && isDigit(ch = s[index])){ 
+            int digit = ch - '0';
+            if(result > maxLimit || (result == maxLimit && digit > 7)){
+                return isNegative ? INT_MIN : INT_MAX;
+            }
+            result = (result * 10) + digit;
+            
+            ++index;
+        }
+        
+        return isNegative ? -result : result;
+    }
+    
+    private:
+    bool isDigit(char ch){
+        return ch >= '0' && ch <= '9';
+    }
+};
+// Palindrome Number
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        int org = x;
+        int rev = 0;
+        
+        while(org > 0){
+            int unit = org%10;
+            rev = 10*rev+unit;
+            org/=10;
+        }
+        
+        return rev == x;
+    }
+};
+// Regular Expression Matching
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int m = s.size(), n = p.size();
+        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+        dp[0][0] = true;
+        for (int i = 0; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (p[j - 1] == '*') {
+                    dp[i][j] = dp[i][j - 2] || (i && dp[i - 1][j] && (s[i - 1] == p[j - 2] || p[j - 2] == '.'));
+                } else {
+                    dp[i][j] = i && dp[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
+                }
+            }
+        }
+        return dp[m][n];
+    }
+};
+//Container With Most Water
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int i=0; int j=height.size()-1;
+        int ans = 0;
+        while(i < j){
+            ans = max(ans,min(height[i],height[j])*(j-i));
+            if(height[i]<height[j])i++;
+            else if(height[i]>height[j])j--;
+            else {
+                i++;
+                j--;
+            }
+        }
+        return ans;
+    }
+};
+//Integer to Roman
+class Solution {
+public:
+    string intToRoman(int num) 
+    {
+        string res;
+        string sym[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        int val[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        
+        for(int i=0; num != 0; i++)
+        {
+            while(num >= val[i])
+            {
+                num -= val[i];
+                res += sym[i];
+            }
+        }
+        
+        return res;
+    }
+};
+// Roman to Integer
+class Solution {
+public:
+    int romanToInt(string s) 
+    {
+        unordered_map<char, int> T = { { 'I' , 1 },
+                                       { 'V' , 5 },
+                                       { 'X' , 10 },
+                                       { 'L' , 50 },
+                                       { 'C' , 100 },
+                                       { 'D' , 500 },
+                                       { 'M' , 1000 } };
+       int sum = T[s.back()];
+       for (int i = s.length() - 2; i >= 0; --i) 
+       {
+           if (T[s[i]] < T[s[i + 1]])
+           {
+               sum -= T[s[i]];
+           }
+           else
+           {
+               sum += T[s[i]];
+           }
+       }
+       return sum;
+    }
+};
+//Longest Common Prefix
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& str) {
+        int n = str.size();
+        if(n==0) return "";
+        
+        string ans  = "";
+        sort(begin(str), end(str));
+        string a = str[0];
+        string b = str[n-1];
+        
+        for(int i=0; i<a.size(); i++){
+            if(a[i]==b[i]){
+                ans = ans + a[i];
+            }
+            else{
+                break;
+            }
+        }
+        
+        return ans;
+        
+    }
+};
+// 3Sum
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        sort(nums.begin() , nums.end());     
+        if(nums.size() < 3){               
+            return {};
+        }
+        if(nums[0] > 0){                   
+            return {};
+        }
+        unordered_map<int , int> hashMap;
+        for(int i = 0 ; i < nums.size() ; ++i){    
+            hashMap[nums[i]] = i;
+        }
+        vector<vector<int>> answer;
+        for(int i = 0 ; i < nums.size() - 2 ; ++i){ 
+            if(nums[i] > 0){    
+                break;
+            }
+            for(int j = i + 1 ; j < nums.size() - 1 ; ++j){    
+                int required = -1*(nums[i] + nums[j]);   
+                if(hashMap.count(required) && hashMap.find(required)->second > j){ 
+                    answer.push_back({nums[i] , nums[j] , required});
+                }
+                j = hashMap.find(nums[j])->second; 
+            }
+            i = hashMap.find(nums[i])->second;     
+        }
+        return answer; 
+    }
+};
+//3Sum Closest
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        int n = nums.size(), ans = nums[0] + nums[1] + nums[2];
+        for (int i = 0; i < n-2; ++i) {
+            int l = i + 1, r = n - 1;
+            while (l < r) {
+                int sum3 = nums[i] + nums[l] + nums[r];
+                if (abs(ans - target) > abs(sum3 - target)) 
+                    ans = sum3;
+                if (sum3 == target) break;
+                if (sum3 > target)
+                    --r; 
+                else
+                    ++l; 
+            }
+        }
+        return ans;
+    }
+};
+//Letter Combinations of a Phone Number
+class Solution {
+public:
+    vector<string> ans;
+    string keyPad[10] = {"", "", "abc", "def", "ghi", "jkl", "mno", "qprs", "tuv", "wxyz"};
+    
+    void backtrack(int index, string& path, const string& digits) {
+        if (index == digits.size()) {
+            ans.push_back(path);
+            return;
+        }
+        for (char c : keyPad[digits[index] - '0']) {
+            path[index] = c;
+            backtrack(index + 1, path, digits);
+        }
+    }
+    
+    vector<string> letterCombinations(const string& digits) {
+        if (digits.empty()) return ans;
+        string path = digits;
+        backtrack(0, path, digits);
+        return ans;
+    }
+};
+//Valid Parentheses
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> st;
+        
+        for(char c: s){
+            if(c == '(' || c == '{' || c == '['){
+                st.push(c);
+            }
+            else{
+                if(st.empty()){
+                    return false;
+                }
+                if(c==')' and st.top()=='('){
+                    st.pop();
+                }
+                else if(c=='}' and st.top()=='{'){
+                    st.pop();
+                }
+                else if(c==']' and st.top()=='['){
+                    st.pop();
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+        if(st.empty()){
+            return true;
+        }
+        return false;
+    }
+};
+// Merge Two Sorted Lists
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+       ListNode* temp = new ListNode(-1);
+        ListNode* head = temp;
+        while(l1!=NULL and l2!=NULL){
+            if(l1->val<=l2->val){
+                head->next = l1;
+                l1 = l1->next;
+            }
+            else {
+                head->next = l2;
+                l2 = l2->next;
+            }
+            head=head->next;
+        }
+        if(l1!=NULL)
+        {
+            head->next = l1;
+        }
+        else head->next = l2;
+        
+        return temp->next;
+    }
+};
+//Generate Parentheses
+class Solution {
+ public:
+  vector<string> generateParenthesis(int n) {
+    vector<string> ans;
+    dfs(n, n, "", ans);
+    return ans;
+  }
+
+ private:
+  void dfs(int l, int r, string&& path, vector<string>& ans) {
+    if (l == 0 && r == 0) {
+      ans.push_back(path);
+      return;
+    }
+
+    if (l > 0) {
+      path.push_back('(');
+      dfs(l - 1, r, std::move(path), ans);
+      path.pop_back();
+    }
+    if (l < r) {
+      path.push_back(')');
+      dfs(l, r - 1, std::move(path), ans);
+      path.pop_back();
+    }
+  }
+};
+//Merge k Sorted Lists
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public ListNode mergeKLists(ListNode[] lists) {
+    List<Integer> values = new ArrayList<>();
+    
+    // Collect all values from the linked lists
+    for (ListNode list : lists) {
+        while (list != null) {
+            values.add(list.val);
+            list = list.next;
+        }
+    }
+    
+    // Sort the values
+    Collections.sort(values);
+    
+    // Create a new sorted linked list
+    ListNode dummy = new ListNode(0);
+    ListNode current = dummy;
+    for (int value : values) {
+        current.next = new ListNode(value);
+        current = current.next;
+    }
+    
+    return dummy.next;
+}
+//Swap Nodes in Pairs
+class Solution {
+ public:
+  ListNode* swapPairs(ListNode* head) {
+    const int length = getLength(head);
+    ListNode dummy(0, head);
+    ListNode* prev = &dummy;
+    ListNode* curr = head;
+
+    for (int i = 0; i < length / 2; ++i) {
+      ListNode* next = curr->next;
+      curr->next = next->next;
+      next->next = prev->next;
+      prev->next = next;
+      prev = curr;
+      curr = curr->next;
+    }
+
+    return dummy.next;
+  }
+
+ private:
+  int getLength(ListNode* head) {
+    int length = 0;
+    for (ListNode* curr = head; curr; curr = curr->next)
+      ++length;
+    return length;
+  }
+};
+//Reverse Nodes in k-Group
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if(head==NULL||k==1) return head;
+        ListNode *dummy=new ListNode();
+        dummy->next=head;
+        ListNode *cur=dummy,*nex=dummy,*pre=dummy;
+        int count=0;
+        while(cur->next!=NULL){
+            cur=cur->next;
+            count++;
+        }
+        while(count>=k){
+            cur=pre->next;
+            nex=cur->next;
+            for(int i=1;i<k;i++){
+                cur->next=nex->next;
+                nex->next=pre->next;
+                pre->next=nex;
+                nex=cur->next;
+            }
+            pre=cur;
+            count-=k;
+        }
+        return dummy->next;
+    }
+};
+//  Remove Duplicates from Sorted Array
+class Solution {
+ public:
+  int removeDuplicates(vector<int>& nums) {
+    int i = 0;
+
+    for (const int num : nums)
+      if (i < 1 || num > nums[i - 1])
+        nums[i++] = num;
+
+    return i;
+  }
+};
+// Find the Index of the First Occurrence in a String
+class Solution {
+ public:
+  int strStr(string haystack, string needle) {
+    const int m = haystack.length();
+    const int n = needle.length();
+
+    for (int i = 0; i < m - n + 1; i++)
+      if (haystack.substr(i, n) == needle)
+        return i;
+
+    return -1;
+  }
+};
+// Substring with Concatenation of All Words
+class Solution {
+public:
+    // This function searches for all starting indices of substring(s) in 's' that is a concatenation of each word in 'words' exactly once and without any intervening characters.
+    vector<int> findSubstring(string s, vector<string>& words) {
+        // Count the frequency of each word in 'words'.
+        unordered_map<string, int> wordCount;
+        for (auto& word : words) {
+            ++wordCount[word];
+        }
+
+        int stringSize = s.size(), wordCountSize = words.size(), wordSize = words[0].size();
+        vector<int> substrIndices;
+
+        // Iterate over the string 's'.
+        for (int i = 0; i < wordSize; ++i) {
+            unordered_map<string, int> windowCount;
+            int left = i, right = i;
+            int totalCount = 0;
+
+            // Slide a window over the string 's'.
+            while (right + wordSize <= stringSize) {
+                string currentWord = s.substr(right, wordSize);
+                right += wordSize;
+
+                // Skip the current segment if the word is not in 'words'.
+                if (!wordCount.count(currentWord)) {
+                    windowCount.clear();
+                    left = right;
+                    totalCount = 0;
+                    continue;
+                }
+
+                // Update the count for the current word in the window.
+                ++windowCount[currentWord];
+                ++totalCount;
+
+                // If there are more occurrences of 'currentWord' in the window than in 'words', remove from the left.
+                while (windowCount[currentWord] > wordCount[currentWord]) {
+                    string wordToRemove = s.substr(left, wordSize);
+                    left += wordSize;
+                    --windowCount[wordToRemove];
+                    --totalCount;
+                }
+
+                // If the total count of words match and all words frequencies are as expected, add to result.
+                if (totalCount == wordCountSize) {
+                    substrIndices.push_back(left);
+                }
+            }
+        }
+
+        return substrIndices;
+    }
+};
+//Next Permutation
+class Solution {
+ public:
+  void nextPermutation(vector<int>& nums) {
+    const int n = nums.size();
+
+    // From back to front, find the first number < nums[i + 1].
+    int i;
+    for (i = n - 2; i >= 0; --i)
+      if (nums[i] < nums[i + 1])
+        break;
+
+    // From back to front, find the first number > nums[i], swap it with
+    // nums[i].
+    if (i >= 0)
+      for (int j = n - 1; j > i; --j)
+        if (nums[j] > nums[i]) {
+          swap(nums[i], nums[j]);
+          break;
+        }
+
+    // Reverse nums[i + 1..n - 1].
+    reverse(nums, i + 1, n - 1);
+  }
+
+ private:
+  void reverse(vector<int>& nums, int l, int r) {
+    while (l < r)
+      swap(nums[l++], nums[r--]);
+  }
+};
+
+
